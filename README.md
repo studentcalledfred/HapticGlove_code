@@ -16,6 +16,28 @@ The project was centered around creating a Unity 3D application and the gloves t
 
 - **Custom Code**: The repository includes the code I wrote for the UI and data collection algorithm (ChooseScripts.cs).
 
-- **Unity Plugin Code**: The `Hand Haptics`, `FingerHaptics`, and `Hand` directories contain code from the Manus Unity plugin. While I did not write this code, I had to thoroughly understand it and make minor adjustments to ensure it integrated properly with my custom code.
+- **Unity Plugin Code**: The Hand and Finger files contain code from the Manus Unity plugin. While I did not write this code, I had to thoroughly understand it and make minor adjustments to ensure it integrated properly with my custom code.
 
 
+
+## Appendix: Project Images
+
+Here are some images from the project along with brief descriptions:
+
+### Data Visualization on MATLAB
+
+The data extrapolated from the experiment was visualized using MATLAB. The image below demonstrates a visualization of how the code works.
+
+![Data Visualization](/Images/TheAlgorithm.png "Data Visualization on MATLAB")
+
+### Results Analysis
+
+The overall results showed significant changes in the Just Noticeable Difference (JND) of participants at different vaseline intensities.
+
+![Results Analysis](/Images/FinalResults.png "Results Analysis")
+
+### Lab Setup and Behind the Scenes
+
+This image shows the behind-the-scenes setup where the magic all happened. Various capabilities such as hand tracking and full-body tracking were tested during the project. However, integration with the gloves' features was not possible. This is what the lab setup looked like:
+
+![Lab Setup](/Images/LabSetup.jpg "Lab Setup and Behind the Scenes")
