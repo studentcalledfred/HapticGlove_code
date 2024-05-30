@@ -26,18 +26,18 @@ Here are some images from the project along with brief descriptions:
 
 ### Data Visualization on MATLAB
 
-The data extrapolated from the experiment was visualized using MATLAB. The image below demonstrates a visualization of how the code works.
+The data extrapolated from the experiment was visualized using MATLAB. The image below demonstrates a visualization of how the ChooseScript.cs algorithm works.
 
 ![Data Visualization](/Images/TheAlgorithm.png "Data Visualization on MATLAB")
 
 ### Results Analysis
 
-The overall results showed significant changes in the Just Noticeable Difference (JND) of participants at different vaseline intensities.
+The overall results showed significant changes in the Just Noticeable Difference (JND) of participants at different baseline intensities.
 
 ![Results Analysis](/Images/FinalResults.png "Results Analysis")
 
 ### Lab Setup and Behind the Scenes
 
-This image shows the behind-the-scenes setup where the magic all happened. Various capabilities such as hand tracking and full-body tracking were tested during the project. However, integration with the gloves' features was not possible. This is what the lab setup looked like:
+This image shows the behind-the-scenes setup where the magic all happened. Various glove capabilities such as hand tracking and full-body tracking were tested during the project. However, I ran out of time to explore these further and integrate them into the project.
 
 ![Lab Setup](/Images/LabSetup.jpg "Lab Setup and Behind the Scenes")
