@@ -20,6 +20,15 @@ The project was centered around creating a Unity 3D application and the gloves t
 
 
 
+
+
+
+
+
+
+
+
+
 ## Appendix: Project Images
 
 Here are some images from the project along with brief descriptions:
