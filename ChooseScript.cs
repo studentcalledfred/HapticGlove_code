@@ -18,15 +18,15 @@ namespace Manus.Haptics
     public class ChooseScript : MonoBehaviour
     {
 
-        //variables for experiment
-        private float first;
-        private float second;   //vibration I change 
-        private float step;        //Size of step that changes vibration
-        private int switchcount; //The amounts of time I switched from up/down
-        private float current; //The float passed to hand haptics
+        //variables for data collection algorithm
+        private float first;     //first vibration
+        private float second;    //second vibration 
+        private float step;      //Step size for vibration change
+        private int incorrectguess; //Number of incorrect guesses
+        private float current;  //The float passed to hand haptics script
         private float variable = 0; //checks what option is chosen
-        private int differencedetected;
-        private int iterations;
+        private int differencedetected; //checks is previous ans was right (1) or wrong (0)
+        private int iterations;         //total number of iterations
 
         //UI VARIABLES
         public Button button1; //left
@@ -34,53 +34,60 @@ namespace Manus.Haptics
         public Button button3; //middle
         public TextMeshProUGUI MyText;
         public float target; //base intensity
-        public float start;
+        public float start;  
         public float initstep;
         GameObject mypanel;
         string path = "";
-        int[] movingaverage = new int[10];
+        int[] movingaverage = new int[10]; //Constantly checks the 10 most recent answers
 
-        //this is startup for game
+
+        //We initalise all variables
         public void Start()
         {
             for(int i = 0; i < movingaverage.Length; i++)
-{
+            {
                 movingaverage[i] = 1;
             }
             iterations = 0;
-            differencedetected = 1;
-            variable = 0f; //to see which was picked
-            current = 0f; //passed to haptic glove
-            switchcount = 0;
-            first = start; //we start from 1f
+            differencedetected = 1; 
+            variable = 0f; 
+            current = 0f;
+            incorrectguess = 0;
+            first = start;
             second = target;
-            step = initstep; // initial step
-            //path = Application.dataPath + "/"+DateTime.Now.ToString("yyyyMMddHHmmss")+".text";
+            step = initstep;
+            //Path variable used to label the files of different participants
             path = Application.dataPath + "/TARGET="+ target + DateTime.Now.ToString("MMddHHmm") + ".text";
-            //StartCoroutine(PlayOptions()); //for delay
             mypanel = GameObject.Find("Panel");
             mypanel.SetActive(true);
-            button1.gameObject.SetActive(false);//left
-            button2.gameObject.SetActive(false);//right
-            button3.gameObject.SetActive(true); //start button
+            button1.gameObject.SetActive(false);//left button
+            button2.gameObject.SetActive(false);//right button
+            button3.gameObject.SetActive(true); //start(middle) button
             button3.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
+            //Here we write labels for data collections
             File.AppendAllText(path, "first\tSecond\tStep\tvariable\tdifferencedetected\n");
             File.AppendAllText(path, first + "\t" + second + "\t" + step + "\t" + variable + "\t"+ differencedetected +"\n");
             
         }
-        //Start Game screen
+
+        /*
+        Scripts below runs when start game is pressed or when an answer is given.
+        The game essentially runs in an infinite loop until an exit condition is met
+        */
+
         public void PlayGame()
         {
             iterations++;
-            //button3.GetComponentInChildren<TextMeshProUGUI>().text = "Not sure";
             button3.gameObject.SetActive(false);//middle
             button1.gameObject.SetActive(false);//left
             button2.gameObject.SetActive(false);//right
-            MyText.text = "Which vibration do you feel as stronger";
+            MyText.text = "Which vibration do you feel as stronger"; 
             StartCoroutine(PlayOptions());
         }
 
-        //Once play is pressed
+        /*
+        Here user is presented with the 2 different vibration intensities
+        */
         IEnumerator PlayOptions()
         {
             yield return new WaitForSeconds(2);
@@ -98,46 +105,46 @@ namespace Manus.Haptics
             current = second;
             yield return new WaitForSeconds(1.5f);
 
+            //After vibrations we go to 'choose' pannel
             MyText.text = "Choose";
             current = 0f;
-            button1.gameObject.SetActive(true);//left
-            button2.gameObject.SetActive(true);//right
-            button3.gameObject.SetActive(true);//middle
+            button1.gameObject.SetActive(true);//left button (first vibration)
+            button2.gameObject.SetActive(true);//right button (second vibration)
+            button3.gameObject.SetActive(true);//middle button (not sure)
             button3.GetComponentInChildren<TextMeshProUGUI>().text = "Not sure";
 
         }
 
-        //if button 1 is pressed
+
+        //if button 1 is pressed (i.e. user chose 'first')
         public void option1()
         {
-            //choice = first;
             if (first > second) //if answer is correct
             {
                 if (differencedetected==1)//if past answer was correct
                 {
-                    if (first == target) second += step;//we go up towards target
+                    if (first == target) second += step; //we go up towards target
                     else first -= step;
                 }
-                //else repeat same step
+                //If we didn't detect this vibration earler we change set flag now
                 differencedetected = 1;
                 
             }
             else //if second is bigger than first 
             {
                 differencedetected = 0;
-                switchcount++;
+                incorrectguess++;
                 if (first == target) second += step; //we go back
                 else first -= step;
                 step *= 0.67f;
             }
-            EndOfGame();
+            EndOfGame(); //Checks for exit conditions and log info
         }
 
-        //if button 2 is pressed
+
+        //if button 2 is pressed (i.e. user chose 'second')
         public void option2()
         {
-        
-            //choice = second;
             if (second > first) //if answer is correct
             {
                 if (differencedetected == 1)
@@ -152,16 +159,17 @@ namespace Manus.Haptics
             else //if first is bigger than second 
             {
                 differencedetected = 0;
-                switchcount++;
+                incorrectguess++;
                 if (second == target) first += step;//push first back up
                 else second -= step; //or push second back down
                 step *= 0.67f;
             }
             EndOfGame();
         }
+
         public void Notsure()
         {
-            switchcount++;
+            incorrectguess++;
             //iterations--; //weird glitch
             if(button3.GetComponentInChildren<TextMeshProUGUI>().text=="Not sure")
             {
@@ -187,38 +195,41 @@ namespace Manus.Haptics
         //function for checking if we reached end of game
         public void EndOfGame()
         {
-            if (step < 0.01f) step = 0.01f;
+            if (step < 0.01f) step = 0.01f; //making sure step doesn't get too small
+
             Debug.Log(movingaverage.Length);
-            // Shift elements to the right
-            Array.Copy(movingaverage, 0, movingaverage, 1, movingaverage.Length-1);
+            Array.Copy(movingaverage, 0, movingaverage, 1, movingaverage.Length-1); //shift answers to right
+            movingaverage[0] = differencedetected; // Assign new value to the beginning of the array
 
-            // Assign new value to the beginning of the array
-            movingaverage[0] = differencedetected;
-
-            // Discard last value
-            //Array.Resize(ref movingaverage, movingaverage.Length - 1);
+            //Make sure intensities are within 0-100% range
             first = Math.Clamp(first, 0, 1);
             second = Math.Clamp(second, 0, 1);
+
             if (first == target) variable = second;
             else variable = first;
 
+            //Log data
             File.AppendAllText(path, first + "\t" + second + "\t" + step + "\t" + variable + "\t" + differencedetected + "\n");
-            //randomize first and second
+            
+            //randomize first and second vibration
             float randomFloat = UnityEngine.Random.Range(0f, 1f);
             if (randomFloat > 0.5f)
             {
-                //Debug.Log("Swapping");
                 float hold = first;
                 first = second;
                 second = hold;
             }
-            //Debug.Log(first + "\t" + second);
-            //If game is over
+
+            /*
+            Checking for exit conditions
+            Conditions 1: 30% or less of last 10 answers were correct
+            Condition 2: More than 25 iterations have passed
+            */
             if (((iterations>=10)&(movingaverage.Sum()<=3))|(iterations>25))
             {
-                button1.gameObject.SetActive(false);//left
-                button2.gameObject.SetActive(false);//right
-                button3.gameObject.SetActive(false);//middle
+                button1.gameObject.SetActive(false);    //left
+                button2.gameObject.SetActive(false);    //right
+                button3.gameObject.SetActive(false);    //middle
                 MyText.text = "Thank you for taking part in our survey";
                 EditorApplication.isPlaying = false;
             }
