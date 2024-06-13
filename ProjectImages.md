@@ -19,3 +19,5 @@ The overall results showed significant changes in the Just Noticeable Difference
 This image shows the behind-the-scenes setup where the magic all happened. Various glove capabilities such as hand tracking and full-body tracking were tested during the project. However, I ran out of time to explore these further and integrate them into the project.
 
 ![Lab Setup](/Images/LabSetup.jpg)
+
+![Participant testing](/Images/Participant.png)
